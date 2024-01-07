@@ -3,21 +3,13 @@ import { BufferBuilder } from "@triforce-heroes/triforce-core";
 import { DataEntry } from "./types/DataEntry.js";
 
 export function rebuild(entries: DataEntry[][]) {
-  const texts = entries.flatMap((entry) =>
-    [...entry].sort((a, b) => a[2] - b[2]).map((message) => message[1]),
-  );
+  let textsIndex = 0;
 
   const textsOffsetsBuilder = new BufferBuilder();
   const textsMessagesBuilder = new BufferBuilder();
 
-  const textsOffset = 4 + texts.length * 4;
-
-  for (const message of texts) {
-    textsOffsetsBuilder.writeUnsignedInt32(
-      textsOffset + textsMessagesBuilder.length,
-    );
-    textsMessagesBuilder.push(Buffer.from(`${message}\0`, "utf16le"));
-  }
+  const textsCount = entries.reduce((sum, entry) => sum + entry.length, 0);
+  const textsOffset = 4 + textsCount * 4;
 
   const labelsOffsetsBuilder = new BufferBuilder();
   const labelsNamesBuilder = new BufferBuilder();
@@ -33,8 +25,13 @@ export function rebuild(entries: DataEntry[][]) {
     );
 
     for (const message of entry) {
+      textsOffsetsBuilder.writeUnsignedInt32(
+        textsOffset + textsMessagesBuilder.length,
+      );
+      textsMessagesBuilder.push(Buffer.from(`${message[1]}\0`, "utf16le"));
+
       labelsNamesBuilder.writeLengthPrefixedString(message[0], 1);
-      labelsNamesBuilder.writeUnsignedInt32(message[2]);
+      labelsNamesBuilder.writeUnsignedInt32(textsIndex++);
     }
   }
 
@@ -45,7 +42,7 @@ export function rebuild(entries: DataEntry[][]) {
     4 + textsOffsetsBuilder.length + textsMessagesBuilder.length,
   ); // Header length.
   textsHeaderBuilder.pad(16); // Padding.
-  textsHeaderBuilder.writeUnsignedInt32(texts.length); // Texts count.
+  textsHeaderBuilder.writeUnsignedInt32(textsIndex); // Texts count.
   textsHeaderBuilder.push(
     textsOffsetsBuilder.build(),
     textsMessagesBuilder.build(),
@@ -70,7 +67,7 @@ export function rebuild(entries: DataEntry[][]) {
   attributesHeaderBuilder.writeString("ATR1"); // Magic.
   attributesHeaderBuilder.writeUnsignedInt32(8); // Header length.
   attributesHeaderBuilder.pad(16); // Padding.
-  attributesHeaderBuilder.writeUnsignedInt32(texts.length); // Texts count.
+  attributesHeaderBuilder.writeUnsignedInt32(textsIndex); // Texts count.
   attributesHeaderBuilder.writeUnsignedInt32(0); // Attribute length (always 0x00).
   attributesHeaderBuilder.pad(16, "\u00AB"); // Padding.
 

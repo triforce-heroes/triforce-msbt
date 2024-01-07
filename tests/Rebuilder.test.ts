@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
@@ -8,14 +8,14 @@ import { DataEntry } from "../src/types/DataEntry.js";
 describe("rebuilder", () => {
   const samples: Array<[string, DataEntry[][]]> = [
     ["example", [[]]],
-    ["example2", [[], [["Hello", "Hello", 0]]]],
+    ["example2", [[], [["Hello", "Hello"]]]],
     ["example3", []],
     [
       "example4",
       [
         [
-          ["A", "123", 0],
-          ["B", "456", 1],
+          ["A", "123"],
+          ["B", "456"],
         ],
       ],
     ],
@@ -23,8 +23,8 @@ describe("rebuilder", () => {
       "example5",
       [
         [
-          ["A", "123", 1],
-          ["B", "456", 0],
+          ["A", "123"],
+          ["B", "456"],
         ],
       ],
     ],
@@ -108,7 +108,7 @@ describe("rebuilder", () => {
         [],
         [],
         [],
-        [["xxxxxxxxxx", "Hello", 0]],
+        [["xxxxxxxxxx", "Hello"]],
         [],
         [],
         [],
@@ -137,8 +137,11 @@ describe("rebuilder", () => {
   ];
 
   it.each(samples)("rebuild(%s.msbt)", (file, entries) => {
-    expect(rebuild(entries)).toStrictEqual(
-      readFileSync(`${__dirname}/fixtures/${file}.msbt`),
-    );
+    const path = `${__dirname}/fixtures`;
+    const source = existsSync(`${path}/${file}b.msbt`)
+      ? readFileSync(`${path}/${file}b.msbt`)
+      : readFileSync(`${path}/${file}.msbt`);
+
+    expect(rebuild(entries)).toStrictEqual(source);
   });
 });

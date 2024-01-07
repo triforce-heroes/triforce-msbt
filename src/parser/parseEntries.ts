@@ -69,11 +69,7 @@ export function parseEntries(
       const entryName = namesConsumer.readLengthPrefixedString(1);
       const entryTextIndex = namesConsumer.readUnsignedInt32();
 
-      entryLabels.push([
-        entryName,
-        textsEntries[entryTextIndex]!,
-        entryTextIndex,
-      ]);
+      entryLabels.push([entryName, textsEntries[entryTextIndex]!]);
     }
 
     entries.push(entryLabels);

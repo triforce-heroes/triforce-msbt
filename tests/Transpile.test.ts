@@ -9,14 +9,14 @@ import { DataEntry } from "../src/types/DataEntry.js";
 describe("transpile", () => {
   const samples: Array<[string, DataEntry[][]]> = [
     ["example", [[]]],
-    ["example2", [[], [["Hello", "Hello", 0]]]],
+    ["example2", [[], [["Hello", "Hello"]]]],
     ["example3", []],
     [
       "example4",
       [
         [
-          ["A", "123", 0],
-          ["B", "456", 1],
+          ["A", "123"],
+          ["B", "456"],
         ],
       ],
     ],
@@ -24,8 +24,8 @@ describe("transpile", () => {
       "example5",
       [
         [
-          ["A", "123", 1],
-          ["B", "456", 0],
+          ["A", "123"],
+          ["B", "456"],
         ],
       ],
     ],
@@ -109,7 +109,7 @@ describe("transpile", () => {
         [],
         [],
         [],
-        [["xxxxxxxxxx", "Hello", 0]],
+        [["xxxxxxxxxx", "Hello"]],
         [],
         [],
         [],

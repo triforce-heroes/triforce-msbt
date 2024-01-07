@@ -1,1 +1,1 @@
-export type DataEntry = [label: string, message: string, index: number];
+export type DataEntry = [label: string, message: string];
