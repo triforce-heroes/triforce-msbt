@@ -19,18 +19,19 @@ export function parseEntries(
   const textsOffsets = textsOffsetsConsumer.readUnsignedInt32();
 
   const textsEntries: string[] = [];
-  const textsEntriesOffset = 4 + textsOffsets * 4;
-  const textsEntriesConsumer = new BufferConsumer(
-    textsData.subarray(textsEntriesOffset),
-    undefined,
-    header.byteOrderMask,
-  );
 
   for (let i = 0; i < textsOffsets; i++) {
-    const textOffset = textsOffsetsConsumer.readUnsignedInt32();
+    const textOffsetStarts = textsOffsetsConsumer.readUnsignedInt32();
+    const testOffsetEnds =
+      i === textsOffsets - 1
+        ? textsData.length - 2
+        : textsOffsetsConsumer.readUnsignedInt32() - 2;
 
-    textsEntriesConsumer.seek(textOffset - textsEntriesOffset);
-    textsEntries.push(textsEntriesConsumer.readNullTerminatedString("utf16le"));
+    textsOffsetsConsumer.back(4);
+
+    textsEntries.push(
+      textsData.subarray(textOffsetStarts, testOffsetEnds).toString("utf16le"),
+    );
   }
 
   const labelsData = sections.get("LBL1")!;
