@@ -8,72 +8,44 @@ export function parseEntries(
   header: DataHeader,
   sections: Map<string, Buffer>,
 ) {
-  const entries: DataEntry[][] = [];
-
-  const textsData = sections.get("TXT2")!;
-  const textsOffsetsConsumer = new BufferConsumer(
-    textsData,
-    undefined,
-    header.byteOrderMask,
-  );
-  const textsOffsets = textsOffsetsConsumer.readUnsignedInt32();
-
-  const textsEntries: string[] = [];
-
-  for (let i = 0; i < textsOffsets; i++) {
-    const textOffsetStarts = textsOffsetsConsumer.readUnsignedInt32();
-    const testOffsetEnds =
-      i === textsOffsets - 1
-        ? textsData.length - 2
-        : textsOffsetsConsumer.readUnsignedInt32() - 2;
-
-    textsOffsetsConsumer.back(4);
-
-    textsEntries.push(
-      textsData.subarray(textOffsetStarts, testOffsetEnds).toString("utf16le"),
-    );
-  }
+  const { byteOrderMask: BOM } = header;
 
   const labelsData = sections.get("LBL1")!;
-  const labelsConsumer = new BufferConsumer(
-    labelsData,
-    undefined,
-    header.byteOrderMask,
-  );
+  const labelsConsumer = new BufferConsumer(labelsData, undefined, BOM);
   const labelsCount = labelsConsumer.readUnsignedInt32();
 
-  const namesOffset = 4 + labelsCount * 8;
-  const namesConsumer = new BufferConsumer(
-    labelsData.subarray(namesOffset),
-    undefined,
-    header.byteOrderMask,
-  );
+  const names = new Map<number, string>();
+  const namesData = labelsData.subarray(4 + labelsCount * 8);
+  const namesConsumer = new BufferConsumer(namesData, undefined, BOM);
 
-  for (let i = 0; i < labelsCount; i++) {
-    const entryLength = labelsConsumer.readUnsignedInt32();
+  while (!namesConsumer.isConsumed()) {
+    const name = namesConsumer.readLengthPrefixedString(1);
+    const nameIndex = namesConsumer.readUnsignedInt32();
 
-    if (entryLength === 0) {
-      labelsConsumer.skip(4);
+    names.set(nameIndex, name);
+  }
 
-      entries.push([]);
+  const textsData = sections.get("TXT2")!;
+  const textsConsumer = new BufferConsumer(textsData, undefined, BOM);
+  const textsCount = textsConsumer.readUnsignedInt32();
 
-      continue;
-    }
+  const entries: DataEntry[] = [];
 
-    const entryOffset = labelsConsumer.readUnsignedInt32();
+  for (let i = 0; i < textsCount; i++) {
+    const offsetStarts = textsConsumer.readUnsignedInt32();
+    const offsetEnds =
+      i === textsCount - 1
+        ? textsData.length - 2
+        : textsConsumer.readUnsignedInt32() - 2;
 
-    namesConsumer.seek(entryOffset - namesOffset);
+    textsConsumer.back(4);
 
-    const entryLabels: DataEntry[] = [];
+    const name = names.get(i)!;
+    const text = textsData
+      .subarray(offsetStarts, offsetEnds)
+      .toString("utf16le");
 
-    for (let j = 0; j < entryLength; j++) {
-      const entryName = namesConsumer.readLengthPrefixedString(1);
-      const entryTextIndex = namesConsumer.readUnsignedInt32();
-
-      entryLabels.push([entryName, textsEntries[entryTextIndex]!]);
-    }
-
-    entries.push(entryLabels);
+    entries.push([name, text]);
   }
 
   return entries;

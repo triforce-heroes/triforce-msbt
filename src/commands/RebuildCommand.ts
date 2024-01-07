@@ -19,7 +19,7 @@ export function RebuildCommand(input: string) {
 
   writeFileSync(
     outputNormalized,
-    rebuild(JSON.parse(readFileSync(input, "utf8")) as DataEntry[][]),
+    rebuild(JSON.parse(readFileSync(input, "utf8")) as DataEntry[]),
   );
 
   process.stdout.write("OK\n");

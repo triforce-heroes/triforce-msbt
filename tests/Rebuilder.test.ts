@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
@@ -6,152 +6,32 @@ import { rebuild } from "../src/Rebuilder.js";
 import { DataEntry } from "../src/types/DataEntry.js";
 
 describe("rebuilder", () => {
-  const samples: Array<[string, DataEntry[][]]> = [
-    ["example", [[]]],
-    ["example2", [[], [["Hello", "Hello"]]]],
-    ["example3", []],
+  const samples: Array<[file: string, slots: number, entries: DataEntry[]]> = [
+    ["example0", 0, []],
+    ["example1", 2, [["Hello", "Hello"]]],
     [
-      "example4",
+      "example2",
+      1,
       [
-        [
-          ["A", "123"],
-          ["B", "456"],
-        ],
+        ["A", "123"],
+        ["B", "456"],
       ],
     ],
     [
-      "example5",
+      "example3",
+      1,
       [
-        [
-          ["A", "123"],
-          ["B", "456"],
-        ],
+        ["A", "\u0000\u00001"],
+        ["B", "\u0000\u00002"],
       ],
     ],
-    [
-      "example6",
-      [
-        [
-          ["A", "\u0000\u00001"],
-          ["B", "\u0000\u00002"],
-        ],
-      ],
-    ],
-    ["example7", [[], [["Hello", "Ação!"]]]],
-    [
-      "example9",
-      [
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [["xxxxxxxxxx", "Hello"]],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-      ],
-    ],
+    ["example4", 2, [["Hello", "Ação!"]]],
+    ["example5", 101, [["npc_msg_00", "Hello"]]],
   ];
 
-  it.each(samples)("rebuild(%s.msbt)", (file, entries) => {
-    const path = `${__dirname}/fixtures`;
-    const source = existsSync(`${path}/${file}b.msbt`)
-      ? readFileSync(`${path}/${file}b.msbt`)
-      : readFileSync(`${path}/${file}.msbt`);
-
-    expect(rebuild(entries)).toStrictEqual(source);
+  it.each(samples)("rebuild(%s.msbt)", (file, slots, entries) => {
+    expect(rebuild(entries, slots)).toStrictEqual(
+      readFileSync(`${__dirname}/fixtures/${file}.msbt`),
+    );
   });
 });
