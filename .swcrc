@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "jsc": {
+    "target": "es2022",
+    "loose": true,
+    "minify": {
+      "mangle": true,
+      "compress": {
+        "defaults": true,
+        "arguments": true,
+        "passes": 2
+      }
+    }
+  },
+  "test": ".*\\.js$",
+  "minify": true
+}

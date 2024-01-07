@@ -1,0 +1,1 @@
+{ "extends": ["@rheactor/eslint-config-rheactor/all"] }
