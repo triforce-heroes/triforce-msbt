@@ -3,7 +3,6 @@ import { normalize } from "node:path";
 
 import { fatal } from "@triforce-heroes/triforce-core";
 
-import { rebuild } from "../Rebuilder.js";
 import { transpile } from "../Transpile.js";
 
 export function TranspileCommand(input: string) {
@@ -17,20 +16,10 @@ export function TranspileCommand(input: string) {
     `Extracting ${normalize(input)} to ${outputNormalized}... `,
   );
 
-  const inputData = readFileSync(input);
-  const transpiled = transpile(inputData);
-
-  writeFileSync(outputNormalized, JSON.stringify(transpiled, null, 2));
-
-  const rebuilded = rebuild(transpiled);
-
-  if (!rebuilded.equals(inputData)) {
-    process.stdout.write("MISMATCH\n");
-
-    writeFileSync(`${outputNormalized}.rebuilded`, rebuilded);
-
-    return;
-  }
+  writeFileSync(
+    outputNormalized,
+    JSON.stringify(transpile(readFileSync(input)), null, 2),
+  );
 
   process.stdout.write("OK\n");
 }

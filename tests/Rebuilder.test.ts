@@ -37,6 +37,7 @@ describe("rebuilder", () => {
         ],
       ],
     ],
+    ["example7", [[], [["Hello", "Ação!"]]]],
     [
       "example9",
       [
