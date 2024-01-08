@@ -1,0 +1,1 @@
+export function hash(t,n=101){let e=0n;for(let n=0;n<t.length;n++)e=1170n*e+BigInt(t.codePointAt(n));return Number(e&BigInt(4294967295))%n}

@@ -1,0 +1,1 @@
+import{BufferConsumer as e,fatal as r}from"@triforce-heroes/triforce-core";export function parseHeader(t){let n=new e(t,void 0,0);"MsgStdBn"!==n.readString(8)&&r("Not a MSBT file.");let i=65534===n.readUnsignedInt16()?1:0;n.skip(2);let d=n.readUnsignedInt8();n.skip();let o=n.readUnsignedInt16();return n.skip(16),{byteOrderMask:i,messageEncoding:d,sectionsCount:o}}
