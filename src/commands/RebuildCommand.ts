@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, normalize } from "node:path";
 
-import { fatal } from "@triforce-heroes/triforce-core";
+import { fatal } from "@triforce-heroes/triforce-core/Console";
 
 import { rebuild } from "../Rebuilder.js";
 import { DataEntry } from "../types/DataEntry.js";

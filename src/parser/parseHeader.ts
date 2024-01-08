@@ -1,8 +1,6 @@
-import {
-  BufferConsumer,
-  ByteOrder,
-  fatal,
-} from "@triforce-heroes/triforce-core";
+import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
+import { fatal } from "@triforce-heroes/triforce-core/Console";
+import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 
 import { MessageEncoding } from "../types/MessageEncoding.js";
 

@@ -1,5 +1,5 @@
 /// <reference types="node" resolution-mode="require"/>
-import { ByteOrder } from "@triforce-heroes/triforce-core";
+import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 import { MessageEncoding } from "../types/MessageEncoding.js";
 export interface DataHeader {
     byteOrderMask: ByteOrder;

@@ -27,6 +27,7 @@ describe("rebuilder", () => {
     ],
     ["example4", 2, [["Hello", "Ação!"]]],
     ["example5", 101, [["npc_msg_00", "Hello"]]],
+    ["example6", 2, [["Hello", "ABC12345678"]]],
   ];
 
   it.each(samples)("rebuild(%s.msbt)", (file, slots, entries) => {

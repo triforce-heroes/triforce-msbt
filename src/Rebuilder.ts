@@ -1,4 +1,4 @@
-import { BufferBuilder } from "@triforce-heroes/triforce-core";
+import { BufferBuilder } from "@triforce-heroes/triforce-core/BufferBuilder";
 
 import { DataEntry } from "./types/DataEntry.js";
 import { MessageEncoding } from "./types/MessageEncoding.js";
