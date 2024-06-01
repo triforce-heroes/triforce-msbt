@@ -1,14 +1,7 @@
 import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
-import { fatal } from "@triforce-heroes/triforce-core/Console";
 import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 
-import { MessageEncoding } from "../types/MessageEncoding.js";
-
-export interface DataHeader {
-  byteOrderMask: ByteOrder;
-  messageEncoding: MessageEncoding;
-  sectionsCount: number;
-}
+import { DataHeader } from "../types/DataHeader.js";
 
 export function parseHeader(buffer: Buffer): DataHeader {
   const consumer = new BufferConsumer(
@@ -17,30 +10,23 @@ export function parseHeader(buffer: Buffer): DataHeader {
     ByteOrder.LITTLE_ENDIAN,
   );
 
-  const magic = consumer.readString(8);
-
-  if (magic !== "MsgStdBn") {
-    fatal("Not a MSBT file.");
-  }
-
-  const byteOrderMask =
-    consumer.readUnsignedInt16() === 0xff_fe
+  const bom =
+    consumer
+      .skip(8) // Magic (always "MsgStdBn").
+      .readUnsignedInt16() === 0xff_fe
       ? ByteOrder.BIG_ENDIAN
       : ByteOrder.LITTLE_ENDIAN;
 
-  consumer.skip(2); // Unknown (always 0x00).
+  const encoding = consumer
+    .skip(2) // Unknown (always 0x00).
+    .readUnsignedInt8();
 
-  const messageEncoding = consumer.readUnsignedInt8() as MessageEncoding;
+  const sections = consumer
+    .skip() // Version number (always 0x03).
+    .readUnsignedInt32();
 
-  consumer.skip(); // Version number (always 0x03).
+  consumer.skip(4); // File size.
+  consumer.skip(10); // Padding.
 
-  const sectionsCount = consumer.readUnsignedInt16();
-
-  consumer.skip(
-    2 + // Unknown (always 0x00).
-      4 + // File size.
-      10, // Padding.
-  );
-
-  return { byteOrderMask, messageEncoding, sectionsCount };
+  return { bom, encoding, sections };
 }

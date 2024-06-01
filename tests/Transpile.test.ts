@@ -1,7 +1,6 @@
 import { readFileSync } from "node:fs";
 
-import * as core from "@triforce-heroes/triforce-core";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { transpile } from "../src/Transpile.js";
 import { DataEntry } from "../src/types/DataEntry.js";
@@ -27,23 +26,12 @@ describe("transpile", () => {
     ["example4", [["Hello", "Ação!"]]],
     ["example5", [["npc_msg_00", "Hello"]]],
     ["example6", [["Hello", "ABC12345678"]]],
+    ["example7", [["Hello", "ABC12345678"]]],
   ] as const;
 
   it.each(samples)("transpile(%s.msbt)", (file, entries) => {
     expect(
       transpile(readFileSync(`${__dirname}/fixtures/${file}.msbt`)),
     ).toStrictEqual(entries);
-  });
-
-  it("transpile(invalid.msbt) must thrown Error", () => {
-    expect.assertions(1);
-
-    vi.spyOn(core, "fatal").mockImplementationOnce(() => {
-      throw new Error("ERROR");
-    });
-
-    expect(() =>
-      transpile(readFileSync(`${__dirname}/fixtures/invalid.msbt`)),
-    ).toThrow("ERROR");
   });
 });

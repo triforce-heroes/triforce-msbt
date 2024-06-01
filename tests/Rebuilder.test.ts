@@ -6,12 +6,11 @@ import { rebuild } from "../src/Rebuilder.js";
 import { DataEntry } from "../src/types/DataEntry.js";
 
 describe("rebuilder", () => {
-  const samples: Array<[file: string, slots: number, entries: DataEntry[]]> = [
-    ["example0", 0, []],
-    ["example1", 2, [["Hello", "Hello"]]],
+  const samples: Array<[file: string, entries: DataEntry[]]> = [
+    ["example0", []],
+    ["example1", [["Hello", "Hello"]]],
     [
       "example2",
-      1,
       [
         ["A", "123"],
         ["B", "456"],
@@ -19,20 +18,20 @@ describe("rebuilder", () => {
     ],
     [
       "example3",
-      1,
       [
         ["A", "\u0000\u00001"],
         ["B", "\u0000\u00002"],
       ],
     ],
-    ["example4", 2, [["Hello", "Ação!"]]],
-    ["example5", 101, [["npc_msg_00", "Hello"]]],
-    ["example6", 2, [["Hello", "ABC12345678"]]],
-  ];
+    ["example4", [["Hello", "Ação!"]]],
+    ["example5", [["npc_msg_00", "Hello"]]],
+    ["example6", [["Hello", "ABC12345678"]]],
+    ["example7", [["Hello", "ABC12345678"]]],
+  ] as const;
 
-  it.each(samples)("rebuild(%s.msbt)", (file, slots, entries) => {
-    expect(rebuild(entries, slots)).toStrictEqual(
-      readFileSync(`${__dirname}/fixtures/${file}.msbt`),
-    );
+  it.each(samples)("rebuild(%s.msbt)", (file, entries) => {
+    const buffer = readFileSync(`${__dirname}/fixtures/${file}.msbt`);
+
+    expect(rebuild(entries, buffer)).toStrictEqual(buffer);
   });
 });

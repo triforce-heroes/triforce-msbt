@@ -1,22 +1,19 @@
 import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
 
 import { DataEntry } from "../types/DataEntry.js";
-
-import { DataHeader } from "./parseHeader.js";
+import { DataHeader } from "../types/DataHeader.js";
 
 export function parseEntries(
   header: DataHeader,
   sections: Map<string, Buffer>,
 ) {
-  const { byteOrderMask: BOM } = header;
-
   const labelsData = sections.get("LBL1")!;
-  const labelsConsumer = new BufferConsumer(labelsData, undefined, BOM);
+  const labelsConsumer = new BufferConsumer(labelsData, undefined, header.bom);
   const labelsCount = labelsConsumer.readUnsignedInt32();
 
   const names = new Map<number, string>();
   const namesData = labelsData.subarray(4 + labelsCount * 8);
-  const namesConsumer = new BufferConsumer(namesData, undefined, BOM);
+  const namesConsumer = new BufferConsumer(namesData, undefined, header.bom);
 
   while (!namesConsumer.isConsumed()) {
     const name = namesConsumer.readLengthPrefixedString(1);
@@ -26,7 +23,7 @@ export function parseEntries(
   }
 
   const textsData = sections.get("TXT2")!;
-  const textsConsumer = new BufferConsumer(textsData, undefined, BOM);
+  const textsConsumer = new BufferConsumer(textsData, undefined, header.bom);
   const textsCount = textsConsumer.readUnsignedInt32();
 
   const entries: DataEntry[] = [];

@@ -1,9 +1,3 @@
 /// <reference types="node" resolution-mode="require"/>
-import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
-import { MessageEncoding } from "../types/MessageEncoding.js";
-export interface DataHeader {
-    byteOrderMask: ByteOrder;
-    messageEncoding: MessageEncoding;
-    sectionsCount: number;
-}
+import { DataHeader } from "../types/DataHeader.js";
 export declare function parseHeader(buffer: Buffer): DataHeader;
