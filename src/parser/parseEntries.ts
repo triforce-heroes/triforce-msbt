@@ -1,4 +1,6 @@
 import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
+import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
+import iconv from "iconv-lite";
 
 import { DataEntry } from "../types/DataEntry.js";
 import { DataHeader } from "../types/DataHeader.js";
@@ -38,11 +40,14 @@ export function parseEntries(
     textsConsumer.back(4);
 
     const name = names.get(i)!;
-    const text = textsData
-      .subarray(offsetStarts, offsetEnds)
-      .toString("utf16le");
+    const text = textsData.subarray(offsetStarts, offsetEnds);
 
-    entries.push([name, text]);
+    entries.push([
+      name,
+      header.bom === ByteOrder.BIG_ENDIAN
+        ? iconv.decode(text, "utf16be")
+        : text.toString("utf16le"),
+    ]);
   }
 
   return entries;

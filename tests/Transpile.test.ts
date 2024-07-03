@@ -9,6 +9,7 @@ describe("transpile", () => {
   const samples: Array<[file: string, entries: DataEntry[]]> = [
     ["example0", []],
     ["example1", [["Hello", "Hello"]]],
+    ["example1be", [["Hello", "Hello"]]],
     [
       "example2",
       [

@@ -26,6 +26,7 @@
     "@types/node": "^20.14.9",
     "@vitest/coverage-v8": "^1.6.0",
     "eslint-plugin-vitest": "^0.4.1",
+    "iconv-lite": "^0.6.3",
     "rimraf": "^5.0.7",
     "tsx": "^4.16.0",
     "typescript": "^5.5.3",

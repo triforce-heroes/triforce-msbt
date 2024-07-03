@@ -1,15 +1,18 @@
 import { BufferBuilder } from "@triforce-heroes/triforce-core/BufferBuilder";
+import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
+import iconv from "iconv-lite";
 
 import { parseHeader } from "./parser/parseHeader.js";
 import { parseSections } from "./parser/parseSections.js";
 import { DataEntry } from "./types/DataEntry.js";
+import { DataHeader } from "./types/DataHeader.js";
 import { MessageEncoding } from "./types/MessageEncoding.js";
 import { hash } from "./utils/hash.js";
 
 type DataLabel = [identifier: string, index: number];
 
-function rebuildHeader(sections: Buffer[]) {
-  const builder = new BufferBuilder();
+function rebuildHeader(sections: Buffer[], header: DataHeader) {
+  const builder = new BufferBuilder(header.bom);
 
   let sectionsLength = 32;
 
@@ -31,8 +34,8 @@ function rebuildHeader(sections: Buffer[]) {
   return builder.build();
 }
 
-function rebuildSection(kind: string, buffer: Buffer) {
-  const builder = new BufferBuilder();
+function rebuildSection(kind: string, buffer: Buffer, header: DataHeader) {
+  const builder = new BufferBuilder(header.bom);
 
   builder.writeString(kind);
   builder.writeUnsignedInt32(buffer.length);
@@ -43,8 +46,13 @@ function rebuildSection(kind: string, buffer: Buffer) {
   return builder.build();
 }
 
-function rebuildTexts(entries: DataEntry[], offsets: Buffer, messages: Buffer) {
-  const builder = new BufferBuilder();
+function rebuildTexts(
+  entries: DataEntry[],
+  offsets: Buffer,
+  messages: Buffer,
+  header: DataHeader,
+) {
+  const builder = new BufferBuilder(header.bom);
 
   builder.writeString("TXT2");
   builder.writeUnsignedInt32(4 + offsets.length + messages.length);
@@ -64,7 +72,10 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
 
   for (const [section, sectionBuffer] of sourceSections.entries()) {
     if (section === "LBL1") {
-      labelsSlots = sectionBuffer.readUInt32LE();
+      labelsSlots =
+        sourceHeader.bom === ByteOrder.BIG_ENDIAN
+          ? sectionBuffer.readUInt32BE()
+          : sectionBuffer.readUInt32LE();
     }
   }
 
@@ -72,22 +83,26 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
     Array.from({ length: labelsSlots }, (_, i) => [i, []]),
   );
 
-  const textsOffsetsBuilder = new BufferBuilder();
-  const textsMessagesBuilder = new BufferBuilder();
+  const textsOffsetsBuilder = new BufferBuilder(sourceHeader.bom);
+  const textsMessagesBuilder = new BufferBuilder(sourceHeader.bom);
   const textsMessagesOffset = 4 + entries.length * 4;
 
   for (const [entryIndex, entry] of entries.entries()) {
     const textMessageOffset = textsMessagesOffset + textsMessagesBuilder.length;
+    const textMessage =
+      sourceHeader.bom === ByteOrder.BIG_ENDIAN
+        ? iconv.encode(entry[1], "utf16be").toString("utf-16le")
+        : entry[1];
 
     textsOffsetsBuilder.writeUnsignedInt32(textMessageOffset);
-    textsMessagesBuilder.push(Buffer.from(`${entry[1]}\0`, "utf16le"));
+    textsMessagesBuilder.push(Buffer.from(`${textMessage}\0`, "utf16le"));
 
     labels.get(hash(entry[0], labelsSlots))!.push([entry[0], entryIndex]);
   }
 
-  const labelsOffsetsBuilder = new BufferBuilder();
+  const labelsOffsetsBuilder = new BufferBuilder(sourceHeader.bom);
 
-  const labelsNamesBuilder = new BufferBuilder();
+  const labelsNamesBuilder = new BufferBuilder(sourceHeader.bom);
   const labelsNamesOffset = 4 + labelsSlots * 8;
 
   labelsOffsetsBuilder.writeUnsignedInt32(labelsSlots);
@@ -115,6 +130,7 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
             labelsOffsetsBuilder.build(),
             labelsNamesBuilder.build(),
           ]),
+          sourceHeader,
         ),
       );
     } else if (kind === "TXT2") {
@@ -123,12 +139,13 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
           entries,
           textsOffsetsBuilder.build(),
           textsMessagesBuilder.build(),
+          sourceHeader,
         ),
       );
     } else {
-      sections.push(rebuildSection(kind, section));
+      sections.push(rebuildSection(kind, section, sourceHeader));
     }
   }
 
-  return rebuildHeader(sections);
+  return rebuildHeader(sections, sourceHeader);
 }
