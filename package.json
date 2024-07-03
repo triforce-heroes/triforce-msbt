@@ -11,23 +11,24 @@
   ],
   "scripts": {
     "build": "rimraf ./dist && tsc -p ./tsconfig.build.json && swc ./dist -d .",
-    "prettier": "prettier --check ./src",
-    "prettier:fix": "prettier --write ./src",
-    "eslint": "eslint ./src",
-    "eslint:fix": "eslint --fix ./src",
+    "prettier": "prettier --check ./src ./tests",
+    "prettier:fix": "prettier --write ./src ./tests",
+    "eslint": "eslint ./src ./tests",
+    "eslint:fix": "eslint --fix ./src ./tests",
     "test": "vitest",
     "test:coverage": "vitest --coverage"
   },
   "devDependencies": {
     "@rheactor/eslint-config-rheactor": "github:rheactor/eslint-config-rheactor",
-    "@swc/cli": "^0.3.12",
-    "@swc/core": "^1.5.24",
+    "@swc/cli": "^0.4.0",
+    "@swc/core": "^1.6.6",
     "@triforce-heroes/triforce-core": "github:triforce-heroes/triforce-core",
-    "@types/node": "^20.13.0",
+    "@types/node": "^20.14.9",
     "@vitest/coverage-v8": "^1.6.0",
+    "eslint-plugin-vitest": "^0.4.1",
     "rimraf": "^5.0.7",
-    "tsx": "^4.11.0",
-    "typescript": "^5.4.5",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.3",
     "vitest": "^1.6.0"
   }
 }

@@ -1,1 +1,1 @@
-{ "extends": ["@rheactor/eslint-config-rheactor/all"] }
+{ "extends": ["@rheactor/eslint-config-rheactor/base-vitest"] }
