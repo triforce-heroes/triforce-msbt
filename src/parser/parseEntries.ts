@@ -5,6 +5,8 @@ import iconv from "iconv-lite";
 import type { DataEntry } from "@/types/DataEntry";
 import type { DataHeader } from "@/types/DataHeader";
 
+import { MessageEncoding } from "@/types/MessageEncoding";
+
 export function parseEntries(
   header: DataHeader,
   sections: Map<string, Buffer>,
@@ -30,24 +32,26 @@ export function parseEntries(
 
   const entries: DataEntry[] = [];
 
+  const isUTF8 = header.encoding === MessageEncoding.UTF8;
+
   for (let i = 0; i < textsCount; i++) {
     const offsetStarts = textsConsumer.readUnsignedInt32();
     const offsetEnds =
       i === textsCount - 1
-        ? textsData.length - 2
-        : textsConsumer.readUnsignedInt32() - 2;
+        ? textsData.length
+        : textsConsumer.readUnsignedInt32();
 
     textsConsumer.back(4);
 
     const name = names.get(i)!;
-    const text = textsData.subarray(offsetStarts, offsetEnds);
 
-    entries.push([
-      name,
+    const text = textsData.subarray(offsetStarts, offsetEnds);
+    const textString =
       header.bom === ByteOrder.BIG_ENDIAN
         ? iconv.decode(text, "utf16be")
-        : text.toString("utf16le"),
-    ]);
+        : text.toString(isUTF8 ? "utf8" : "utf16le");
+
+    entries.push([name, textString.slice(0, -1)]);
   }
 
   return entries;

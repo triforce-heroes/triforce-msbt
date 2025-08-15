@@ -29,6 +29,7 @@ describe("transpile", () => {
     ["example5", [["npc_msg_00", "Hello"]]],
     ["example6", [["Hello", "ABC12345678"]]],
     ["example7", [["Hello", "ABC12345678"]]],
+    ["example8", [["Hello", "Hello"]]],
   ] as const;
 
   it.each(samples)("transpile(%s.msbt)", (file, entries) => {

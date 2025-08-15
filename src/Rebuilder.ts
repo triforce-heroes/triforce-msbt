@@ -24,7 +24,7 @@ function rebuildHeader(sections: Buffer[], header: DataHeader) {
   builder.writeString("MsgStdBn");
   builder.writeUnsignedInt16(0xfe_ff);
   builder.writeUnsignedInt16(0);
-  builder.writeUnsignedInt8(MessageEncoding.UTF16);
+  builder.writeUnsignedInt8(header.encoding);
   builder.writeUnsignedInt8(3);
   builder.writeUnsignedInt16(sections.length);
   builder.writeUnsignedInt16(0);
@@ -88,6 +88,8 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
   const textsMessagesBuilder = new BufferBuilder(sourceHeader.bom);
   const textsMessagesOffset = 4 + entries.length * 4;
 
+  const isUTF8 = sourceHeader.encoding === MessageEncoding.UTF8;
+
   for (const [entryIndex, entry] of entries.entries()) {
     const textMessageOffset = textsMessagesOffset + textsMessagesBuilder.length;
     const textMessage =
@@ -96,7 +98,9 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
         : entry[1];
 
     textsOffsetsBuilder.writeUnsignedInt32(textMessageOffset);
-    textsMessagesBuilder.push(Buffer.from(`${textMessage}\0`, "utf16le"));
+    textsMessagesBuilder.push(
+      Buffer.from(`${textMessage}\0`, isUTF8 ? "utf8" : "utf16le"),
+    );
 
     labels.get(hash(entry[0], labelsSlots))!.push([entry[0], entryIndex]);
   }
