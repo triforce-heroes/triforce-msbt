@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { transpile } from "../src/Transpile.js";
-import { DataEntry } from "../src/types/DataEntry.js";
+import type { DataEntry } from "@/index";
+
+import { transpile } from "@/index";
 
 describe("transpile", () => {
   const samples: Array<[file: string, entries: DataEntry[]]> = [

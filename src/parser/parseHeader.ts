@@ -1,7 +1,7 @@
 import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
 import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 
-import { DataHeader } from "../types/DataHeader.js";
+import type { DataHeader } from "@/types/DataHeader";
 
 export function parseHeader(buffer: Buffer): DataHeader {
   const bom =

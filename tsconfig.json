@@ -1,32 +1,28 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "alwaysStrict": true,
-    "checkJs": true,
+    "allowJs": true,
+    "baseUrl": ".",
     "declaration": true,
-    "declarationDir": "dist",
-    "disableSizeLimit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "isolatedModules": false,
     "lib": ["ESNext"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "newLine": "LF",
-    "noErrorTruncation": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "outDir": "dist",
-    "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ESNext"
+    "target": "ESNext",
+
+    "paths": { "@/*": ["src/*"] },
+    "plugins": [
+      { "transform": "typescript-transform-paths", "afterDeclarations": true }
+    ]
   },
 
-  "include": ["./src/**/*.ts", "./tests/**/*.ts", "./vite.config.ts"],
-  "exclude": ["./dist/**/*.js"]
+  "include": ["**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }

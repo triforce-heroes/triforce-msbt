@@ -1,15 +1,19 @@
 {
-  "$schema": "https://json.schemastore.org/swcrc",
+  "$schema": "https://swc.rs/schema.json",
   "jsc": {
-    "target": "es2022",
+    "target": "es2024",
     "loose": true,
     "minify": {
       "mangle": true,
       "compress": {
         "defaults": true,
         "arguments": true,
-        "passes": 2
+        "passes": 3
       }
+    },
+    "baseUrl": "./dist",
+    "paths": {
+      "@/*": ["./*"]
     }
   },
   "test": ".*\\.js$",

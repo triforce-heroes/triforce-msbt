@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { rebuild } from "../src/Rebuilder.js";
-import { DataEntry } from "../src/types/DataEntry.js";
+import type { DataEntry } from "@/index";
+
+import { rebuild } from "@/index";
 
 describe("rebuilder", () => {
   const samples: Array<[file: string, entries: DataEntry[]]> = [

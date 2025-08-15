@@ -1,6 +1,6 @@
-import { parseEntries } from "./parser/parseEntries.js";
-import { parseHeader } from "./parser/parseHeader.js";
-import { parseSections } from "./parser/parseSections.js";
+import { parseEntries } from "@/parser/parseEntries";
+import { parseHeader } from "@/parser/parseHeader";
+import { parseSections } from "@/parser/parseSections";
 
 export function transpile(buffer: Buffer) {
   const header = parseHeader(buffer);

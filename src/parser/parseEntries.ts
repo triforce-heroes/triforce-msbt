@@ -2,8 +2,8 @@ import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
 import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 import iconv from "iconv-lite";
 
-import { DataEntry } from "../types/DataEntry.js";
-import { DataHeader } from "../types/DataHeader.js";
+import type { DataEntry } from "@/types/DataEntry";
+import type { DataHeader } from "@/types/DataHeader";
 
 export function parseEntries(
   header: DataHeader,

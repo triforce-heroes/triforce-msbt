@@ -2,12 +2,13 @@ import { BufferBuilder } from "@triforce-heroes/triforce-core/BufferBuilder";
 import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 import iconv from "iconv-lite";
 
-import { parseHeader } from "./parser/parseHeader.js";
-import { parseSections } from "./parser/parseSections.js";
-import { DataEntry } from "./types/DataEntry.js";
-import { DataHeader } from "./types/DataHeader.js";
-import { MessageEncoding } from "./types/MessageEncoding.js";
-import { hash } from "./utils/hash.js";
+import type { DataEntry } from "@/types/DataEntry";
+import type { DataHeader } from "@/types/DataHeader";
+
+import { parseHeader } from "@/parser/parseHeader";
+import { parseSections } from "@/parser/parseSections";
+import { MessageEncoding } from "@/types/MessageEncoding";
+import { hash } from "@/utils/hash";
 
 type DataLabel = [identifier: string, index: number];
 
@@ -68,7 +69,7 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
   const sourceHeader = parseHeader(source);
   const sourceSections = parseSections(source, sourceHeader);
 
-  let labelsSlots!: number;
+  let labelsSlots = 0;
 
   for (const [section, sectionBuffer] of sourceSections.entries()) {
     if (section === "LBL1") {

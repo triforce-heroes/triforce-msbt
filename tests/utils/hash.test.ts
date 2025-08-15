@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { hash } from "../../src/utils/hash.js";
+import { hash } from "@/utils/hash";
 
 describe("hash", () => {
   const samples = [

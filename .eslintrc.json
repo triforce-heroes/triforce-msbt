@@ -1,1 +1,0 @@
-{ "extends": ["@rheactor/eslint-config-rheactor/base-vitest"] }

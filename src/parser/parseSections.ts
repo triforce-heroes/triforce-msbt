@@ -1,6 +1,6 @@
 import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
 
-import { DataHeader } from "../types/DataHeader.js";
+import type { DataHeader } from "@/types/DataHeader";
 
 export function parseSections(buffer: Buffer, header: DataHeader) {
   const consumer = new BufferConsumer(buffer, 32, header.bom);
