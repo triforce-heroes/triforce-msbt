@@ -51,7 +51,7 @@ export function parseEntries(
         ? iconv.decode(text, "utf16be")
         : text.toString(isUTF8 ? "utf8" : "utf16le");
 
-    entries.push([name, textString.slice(0, -1)]);
+    entries.push([name, textString]);
   }
 
   return entries;

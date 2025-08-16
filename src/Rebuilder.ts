@@ -99,7 +99,7 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
 
     textsOffsetsBuilder.writeUnsignedInt32(textMessageOffset);
     textsMessagesBuilder.push(
-      Buffer.from(`${textMessage}\0`, isUTF8 ? "utf8" : "utf16le"),
+      Buffer.from(textMessage, isUTF8 ? "utf8" : "utf16le"),
     );
 
     labels.get(hash(entry[0], labelsSlots))!.push([entry[0], entryIndex]);
