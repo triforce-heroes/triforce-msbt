@@ -1,13 +1,11 @@
 import { BufferBuilder } from "@triforce-heroes/triforce-core/BufferBuilder";
 import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
-import iconv from "iconv-lite";
 
 import type { DataEntry } from "@/types/DataEntry";
 import type { DataHeader } from "@/types/DataHeader";
 
 import { parseHeader } from "@/parser/parseHeader";
 import { parseSections } from "@/parser/parseSections";
-import { MessageEncoding } from "@/types/MessageEncoding";
 import { hash } from "@/utils/hash";
 
 type DataLabel = [identifier: string, index: number];
@@ -88,19 +86,11 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
   const textsMessagesBuilder = new BufferBuilder(sourceHeader.bom);
   const textsMessagesOffset = 4 + entries.length * 4;
 
-  const isUTF8 = sourceHeader.encoding === MessageEncoding.UTF8;
-
   for (const [entryIndex, entry] of entries.entries()) {
     const textMessageOffset = textsMessagesOffset + textsMessagesBuilder.length;
-    const textMessage =
-      sourceHeader.bom === ByteOrder.BIG_ENDIAN
-        ? iconv.encode(entry[1], "utf16be").toString("utf-16le")
-        : entry[1];
 
     textsOffsetsBuilder.writeUnsignedInt32(textMessageOffset);
-    textsMessagesBuilder.push(
-      Buffer.from(textMessage, isUTF8 ? "utf8" : "utf16le"),
-    );
+    textsMessagesBuilder.push(Buffer.from(entry[1], "binary"));
 
     labels.get(hash(entry[0], labelsSlots))!.push([entry[0], entryIndex]);
   }

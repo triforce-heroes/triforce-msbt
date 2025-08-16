@@ -1,11 +1,7 @@
 import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
-import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
-import iconv from "iconv-lite";
 
 import type { DataEntry } from "@/types/DataEntry";
 import type { DataHeader } from "@/types/DataHeader";
-
-import { MessageEncoding } from "@/types/MessageEncoding";
 
 export function parseEntries(
   header: DataHeader,
@@ -32,8 +28,6 @@ export function parseEntries(
 
   const entries: DataEntry[] = [];
 
-  const isUTF8 = header.encoding === MessageEncoding.UTF8;
-
   for (let i = 0; i < textsCount; i++) {
     const offsetStarts = textsConsumer.readUnsignedInt32();
     const offsetEnds =
@@ -43,15 +37,10 @@ export function parseEntries(
 
     textsConsumer.back(4);
 
-    const name = names.get(i)!;
-
-    const text = textsData.subarray(offsetStarts, offsetEnds);
-    const textString =
-      header.bom === ByteOrder.BIG_ENDIAN
-        ? iconv.decode(text, "utf16be")
-        : text.toString(isUTF8 ? "utf8" : "utf16le");
-
-    entries.push([name, textString]);
+    entries.push([
+      names.get(i)!,
+      textsData.subarray(offsetStarts, offsetEnds).toString("binary"),
+    ]);
   }
 
   return entries;
