@@ -3,6 +3,8 @@ import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
 import type { DataEntry } from "@/types/DataEntry";
 import type { DataHeader } from "@/types/DataHeader";
 
+import { MessageEncoding } from "@/types/MessageEncoding";
+
 export function parseEntries(
   header: DataHeader,
   sections: Map<string, Buffer>,
@@ -28,6 +30,8 @@ export function parseEntries(
 
   const entries: DataEntry[] = [];
 
+  const terminatorLength = header.encoding === MessageEncoding.UTF8 ? 1 : 2;
+
   for (let i = 0; i < textsCount; i++) {
     const offsetStarts = textsConsumer.readUnsignedInt32();
     const offsetEnds =
@@ -39,7 +43,9 @@ export function parseEntries(
 
     entries.push([
       names.get(i)!,
-      textsData.subarray(offsetStarts, offsetEnds).toString("binary"),
+      textsData
+        .subarray(offsetStarts, offsetEnds - terminatorLength)
+        .toString("binary"),
     ]);
   }
 

@@ -6,6 +6,7 @@ import type { DataHeader } from "@/types/DataHeader";
 
 import { parseHeader } from "@/parser/parseHeader";
 import { parseSections } from "@/parser/parseSections";
+import { MessageEncoding } from "@/types/MessageEncoding";
 import { hash } from "@/utils/hash";
 
 type DataLabel = [identifier: string, index: number];
@@ -86,11 +87,14 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
   const textsMessagesBuilder = new BufferBuilder(sourceHeader.bom);
   const textsMessagesOffset = 4 + entries.length * 4;
 
+  const terminator =
+    sourceHeader.encoding === MessageEncoding.UTF8 ? "\x00" : "\x00\x00";
+
   for (const [entryIndex, entry] of entries.entries()) {
     const textMessageOffset = textsMessagesOffset + textsMessagesBuilder.length;
 
     textsOffsetsBuilder.writeUnsignedInt32(textMessageOffset);
-    textsMessagesBuilder.push(Buffer.from(entry[1], "binary"));
+    textsMessagesBuilder.push(Buffer.from(entry[1] + terminator, "binary"));
 
     labels.get(hash(entry[0], labelsSlots))!.push([entry[0], entryIndex]);
   }
