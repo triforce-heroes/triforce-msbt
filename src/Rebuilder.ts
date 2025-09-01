@@ -1,4 +1,5 @@
 import { BufferBuilder } from "@triforce-heroes/triforce-core/BufferBuilder";
+import { encodeFromString } from "@triforce-heroes/triforce-core/Encoding";
 import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 
 import type { DataEntry } from "@/types/DataEntry";
@@ -87,14 +88,17 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
   const textsMessagesBuilder = new BufferBuilder(sourceHeader.bom);
   const textsMessagesOffset = 4 + entries.length * 4;
 
-  const terminator =
-    sourceHeader.encoding === MessageEncoding.UTF8 ? "\x00" : "\x00\x00";
+  const isUTF8 = sourceHeader.encoding === MessageEncoding.UTF8;
 
   for (const [entryIndex, entry] of entries.entries()) {
     const textMessageOffset = textsMessagesOffset + textsMessagesBuilder.length;
 
     textsOffsetsBuilder.writeUnsignedInt32(textMessageOffset);
-    textsMessagesBuilder.push(Buffer.from(entry[1] + terminator, "binary"));
+    textsMessagesBuilder.push(
+      isUTF8
+        ? encodeFromString(`${entry[1]}\0`)
+        : Buffer.from(`${entry[1]}\0\0`, "binary"),
+    );
 
     labels.get(hash(entry[0], labelsSlots))!.push([entry[0], entryIndex]);
   }

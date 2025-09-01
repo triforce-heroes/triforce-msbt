@@ -36,7 +36,7 @@ describe("rebuilder", () => {
       [["Hello", "A\x00B\x00C\x001\x002\x003\x004\x005\x006\x007\x008\x00"]],
     ],
     ["example8", [["Hello", "Hello"]]],
-    ["example9", [["Hello", "\u00CF\u00FF\u00FF\u004Do"]]],
+    ["example9", [["Hello", "\uDCCF\uDCFF\uDCFF\u004Do"]]],
   ] as const;
 
   it.each(samples)("rebuild(%s.msbt)", (file, entries) => {
