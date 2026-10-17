@@ -2,13 +2,12 @@ import { BufferBuilder } from "@triforce-heroes/triforce-core/BufferBuilder";
 import { encodeFromString } from "@triforce-heroes/triforce-core/Encoding";
 import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 
-import type { DataEntry } from "@/types/DataEntry";
-import type { DataHeader } from "@/types/DataHeader";
-
-import { parseHeader } from "@/parser/parseHeader";
-import { parseSections } from "@/parser/parseSections";
-import { MessageEncoding } from "@/types/MessageEncoding";
-import { hash } from "@/utils/hash";
+import { parseHeader } from "#/parser/parseHeader";
+import { parseSections } from "#/parser/parseSections";
+import type { DataEntry } from "#/types/DataEntry";
+import type { DataHeader } from "#/types/DataHeader";
+import { MessageEncoding } from "#/types/MessageEncoding";
+import { hash } from "#/utils/hash";
 
 type DataLabel = [identifier: string, index: number];
 
@@ -47,12 +46,7 @@ function rebuildSection(kind: string, buffer: Buffer, header: DataHeader) {
   return builder.build();
 }
 
-function rebuildTexts(
-  entries: DataEntry[],
-  offsets: Buffer,
-  messages: Buffer,
-  header: DataHeader,
-) {
+function rebuildTexts(entries: DataEntry[], offsets: Buffer, messages: Buffer, header: DataHeader) {
   const builder = new BufferBuilder(header.bom);
 
   builder.writeString("TXT2");
@@ -88,19 +82,18 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
   const textsMessagesBuilder = new BufferBuilder(sourceHeader.bom);
   const textsMessagesOffset = 4 + entries.length * 4;
 
-  const isUTF8 = sourceHeader.encoding === MessageEncoding.UTF8;
-
   for (const [entryIndex, entry] of entries.entries()) {
+    const [label, message] = entry;
     const textMessageOffset = textsMessagesOffset + textsMessagesBuilder.length;
 
     textsOffsetsBuilder.writeUnsignedInt32(textMessageOffset);
     textsMessagesBuilder.push(
-      isUTF8
-        ? encodeFromString(`${entry[1]}\0`)
-        : Buffer.from(`${entry[1]}\0\0`, "binary"),
+      sourceHeader.encoding === MessageEncoding.UTF8
+        ? encodeFromString(`${message}\0`)
+        : Buffer.from(`${message}\0\0`, "binary"),
     );
 
-    labels.get(hash(entry[0], labelsSlots))!.push([entry[0], entryIndex]);
+    labels.get(hash(label, labelsSlots))!.push([label, entryIndex]);
   }
 
   const labelsOffsetsBuilder = new BufferBuilder(sourceHeader.bom);
@@ -112,9 +105,7 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
 
   for (const names of labels.values()) {
     labelsOffsetsBuilder.writeUnsignedInt32(names.length);
-    labelsOffsetsBuilder.writeUnsignedInt32(
-      labelsNamesOffset + labelsNamesBuilder.length,
-    );
+    labelsOffsetsBuilder.writeUnsignedInt32(labelsNamesOffset + labelsNamesBuilder.length);
 
     for (const [name, nameIndex] of names) {
       labelsNamesBuilder.writeLengthPrefixedString(name, 1);
@@ -129,10 +120,7 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
       sections.push(
         rebuildSection(
           kind,
-          Buffer.concat([
-            labelsOffsetsBuilder.build(),
-            labelsNamesBuilder.build(),
-          ]),
+          Buffer.concat([labelsOffsetsBuilder.build(), labelsNamesBuilder.build()]),
           sourceHeader,
         ),
       );

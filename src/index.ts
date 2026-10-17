@@ -1,4 +1,4 @@
-export { transpile } from "@/Transpile.js";
-export { rebuild } from "@/Rebuilder.js";
+export { transpile } from "#/Transpile";
+export { rebuild } from "#/Rebuilder";
 
-export type { DataEntry } from "@/types/DataEntry.js";
+export type { DataEntry } from "#/types/DataEntry";

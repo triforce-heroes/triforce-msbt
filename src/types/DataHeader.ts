@@ -1,5 +1,6 @@
-import type { MessageEncoding } from "@/types/MessageEncoding";
 import type { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
+
+import type { MessageEncoding } from "#/types/MessageEncoding";
 
 export interface DataHeader {
   bom: ByteOrder;

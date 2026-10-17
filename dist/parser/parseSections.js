@@ -1,1 +1,0 @@
-import{BufferConsumer as e}from"@triforce-heroes/triforce-core/BufferConsumer";export function parseSections(r,n){let o=new e(r,32,n.bom),t=new Map;for(;!o.isConsumed();){let e=o.readString(4),r=o.readUnsignedInt32();o.skip(8),t.set(e,o.read(r)),o.skipPadding(16)}return t}

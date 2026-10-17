@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { hash } from "@/utils/hash";
+import { hash } from "#/utils/hash";
 
-describe("hash", () => {
+describe(hash, () => {
   const samples = [
     ["hello", 65],
     ["savedata", 36],

@@ -1,26 +1,23 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "baseUrl": ".",
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": false,
+    "isolatedModules": true,
     "lib": ["ESNext"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
-    "outDir": "dist",
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
-
-    "paths": { "@/*": ["src/*"] },
-    "plugins": [
-      { "transform": "typescript-transform-paths", "afterDeclarations": true }
-    ]
+    "types": ["node"],
+    "paths": {
+      "#/*": ["./src/*.ts"],
+      "#tests/*": ["./tests/*"]
+    }
   },
 
   "include": ["**/*.ts"],

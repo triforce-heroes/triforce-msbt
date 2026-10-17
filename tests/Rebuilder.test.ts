@@ -1,46 +1,47 @@
-import { readFileSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 
 import { describe, expect, it } from "vitest";
 
-import type { DataEntry } from "@/index";
-
-import { rebuild } from "@/index";
+import type { DataEntry } from "#/index";
+import { rebuild } from "#/index";
 
 describe("rebuilder", () => {
   const samples: Array<[file: string, entries: DataEntry[]]> = [
     ["example0", []],
-    ["example1", [["Hello", "H\x00e\x00l\x00l\x00o\x00"]]],
-    ["example1be", [["Hello", "\x00H\x00e\x00l\x00l\x00o"]]],
+    ["example1", [["Hello", "H\u0000e\u0000l\u0000l\u0000o\u0000"]]],
+    ["example1be", [["Hello", "\u0000H\u0000e\u0000l\u0000l\u0000o"]]],
     [
       "example2",
       [
-        ["A", "1\x002\x003\x00"],
-        ["B", "4\x005\x006\x00"],
+        ["A", "1\u00002\u00003\u0000"],
+        ["B", "4\u00005\u00006\u0000"],
       ],
     ],
     [
       "example3",
       [
-        ["A", "\x00\x00\x00\x001\x00"],
-        ["B", "\x00\x00\x00\x002\x00"],
+        ["A", "\u0000\u0000\u0000\u00001\u0000"],
+        ["B", "\u0000\u0000\u0000\u00002\u0000"],
       ],
     ],
-    ["example4", [["Hello", "A\x00ç\x00ã\x00o\x00!\x00"]]],
-    ["example5", [["npc_msg_00", "H\x00e\x00l\x00l\x00o\x00"]]],
+    ["example4", [["Hello", "A\u0000ç\u0000ã\u0000o\u0000!\u0000"]]],
+    ["example5", [["npc_msg_00", "H\u0000e\u0000l\u0000l\u0000o\u0000"]]],
     [
       "example6",
-      [["Hello", "A\x00B\x00C\x001\x002\x003\x004\x005\x006\x007\x008\x00"]],
+      [["Hello", "A\u0000B\u0000C\u00001\u00002\u00003\u00004\u00005\u00006\u00007\u00008\u0000"]],
     ],
     [
       "example7",
-      [["Hello", "A\x00B\x00C\x001\x002\x003\x004\x005\x006\x007\x008\x00"]],
+      [["Hello", "A\u0000B\u0000C\u00001\u00002\u00003\u00004\u00005\u00006\u00007\u00008\u0000"]],
     ],
     ["example8", [["Hello", "Hello"]]],
     ["example9", [["Hello", "\uDCCF\uDCFF\uDCFF\u004Do"]]],
   ] as const;
 
-  it.each(samples)("rebuild(%s.msbt)", (file, entries) => {
-    const buffer = readFileSync(`${__dirname}/fixtures/${file}.msbt`);
+  it.each(samples)("rebuild(%s.msbt)", async (file, entries) => {
+    expect.assertions(1);
+
+    const buffer = await readFile(new URL(`fixtures/${file}.msbt`, import.meta.url));
 
     expect(rebuild(entries, buffer)).toStrictEqual(buffer);
   });

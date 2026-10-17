@@ -1,13 +1,10 @@
 import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
 import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 
-import type { DataHeader } from "@/types/DataHeader";
+import type { DataHeader } from "#/types/DataHeader";
 
 export function parseHeader(buffer: Buffer): DataHeader {
-  const bom =
-    buffer.readUInt16LE(8) === 0xff_fe
-      ? ByteOrder.BIG_ENDIAN
-      : ByteOrder.LITTLE_ENDIAN;
+  const bom = buffer.readUInt16LE(8) === 0xff_fe ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN;
 
   const consumer = new BufferConsumer(buffer, undefined, bom);
 

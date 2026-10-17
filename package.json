@@ -1,38 +1,47 @@
 {
   "name": "@triforce-heroes/triforce-msbt",
-  "description": "Transpile and rebuild MSBT files.",
   "version": "1.0.0",
+  "description": "Transpile and rebuild MSBT files.",
   "license": "Apache License 2.0",
-  "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*",
+    "#tests/*": "./tests/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
   "scripts": {
-    "build": "rimraf ./dist && tspc -p ./tsconfig.build.json && swc ./dist -d .",
-    "prettier": "prettier --check ./src ./tests",
-    "prettier:fix": "prettier --write ./src ./tests",
-    "eslint": "eslint ./src ./tests",
-    "eslint:fix": "eslint --fix ./src ./tests",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage"
+    "build": "bun run lint && bun run test && tsdown",
+    "lint": "bun run typecheck && bun run oxlint && bun run oxfmt",
+    "lint:fix": "bun run typecheck && bun run oxlint:fix && bun run oxfmt:fix",
+    "oxfmt": "oxfmt --check ./src ./tests",
+    "oxfmt:fix": "oxfmt --write ./src ./tests",
+    "oxlint": "oxlint ./src ./tests",
+    "oxlint:fix": "oxlint --fix ./src ./tests",
+    "test": "vitest --run",
+    "test:coverage": "vitest --run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@triforce-heroes/triforce-core": "github:triforce-heroes/triforce-core"
   },
   "devDependencies": {
-    "@rheactor/eslint-config-rheactor": "github:rheactor/eslint-config-rheactor",
-    "@swc/cli": "^0.7.8",
-    "@swc/core": "^1.13.5",
-    "@triforce-heroes/triforce-core": "github:triforce-heroes/triforce-core",
-    "@types/node": "^24.3.0",
-    "@vitest/coverage-v8": "^3.2.4",
-    "eslint": "^9.34.0",
-    "eslint-plugin-vitest": "^0.5.4",
-    "prettier": "^3.6.2",
-    "rimraf": "^6.0.1",
-    "tsx": "^4.20.5",
-    "ts-patch": "^3.3.0",
-    "typescript": "^5.9.2",
-    "typescript-transform-paths": "^3.5.5",
-    "vitest": "^3.2.4"
+    "@rheactor/rheactor-oxc-config": "github:rheactor/rheactor-oxc-config",
+    "@types/node": "^26.6.5",
+    "@vitest/coverage-v8": "^5.0.5",
+    "oxfmt": "^0.73.0",
+    "oxlint": "^1.88.0",
+    "oxlint-tsgolint": "^7.0.2004",
+    "tsdown": "^0.23.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
   }
 }
