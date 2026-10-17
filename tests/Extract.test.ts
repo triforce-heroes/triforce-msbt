@@ -2,11 +2,10 @@ import { readFile } from "node:fs/promises";
 
 import { describe, expect, it } from "vitest";
 
-import type { DataEntry } from "#/index";
-import { transpile } from "#/index";
+import { extract } from "#/Extract";
 
-describe(transpile, () => {
-  const samples: Array<[file: string, entries: DataEntry[]]> = [
+describe(extract, () => {
+  const samples: Array<[file: string, entries: Array<[label: string, message: string]>]> = [
     ["example0", []],
     ["example1", [["Hello", "H\u0000e\u0000l\u0000l\u0000o\u0000"]]],
     ["example1be", [["Hello", "\u0000H\u0000e\u0000l\u0000l\u0000o"]]],
@@ -38,11 +37,11 @@ describe(transpile, () => {
     ["example9", [["Hello", "\uDCCF\uDCFF\uDCFF\u004Do"]]],
   ] as const;
 
-  it.each(samples)("transpile(%s.msbt)", async (file, entries) => {
+  it.each(samples)("extract(%s.msbt)", async (file, entries) => {
     expect.assertions(1);
 
     const buffer = await readFile(new URL(`fixtures/${file}.msbt`, import.meta.url));
 
-    expect(transpile(buffer)).toStrictEqual(entries);
+    expect(extract(buffer)).toStrictEqual(entries);
   });
 });

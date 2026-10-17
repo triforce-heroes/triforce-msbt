@@ -2,9 +2,9 @@ import { BufferBuilder } from "@triforce-heroes/triforce-core/BufferBuilder";
 import { encodeFromString } from "@triforce-heroes/triforce-core/Encoding";
 import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 
+import { parseEntries } from "#/parser/parseEntries";
 import { parseHeader } from "#/parser/parseHeader";
 import { parseSections } from "#/parser/parseSections";
-import type { DataEntry } from "#/types/DataEntry";
 import type { DataHeader } from "#/types/DataHeader";
 import { MessageEncoding } from "#/types/MessageEncoding";
 import { hash } from "#/utils/hash";
@@ -46,22 +46,23 @@ function rebuildSection(kind: string, buffer: Buffer, header: DataHeader) {
   return builder.build();
 }
 
-function rebuildTexts(entries: DataEntry[], offsets: Buffer, messages: Buffer, header: DataHeader) {
+function rebuildTexts(entryCount: number, offsets: Buffer, messages: Buffer, header: DataHeader) {
   const builder = new BufferBuilder(header.bom);
 
   builder.writeString("TXT2");
   builder.writeUnsignedInt32(4 + offsets.length + messages.length);
   builder.pad(16);
-  builder.writeUnsignedInt32(entries.length);
+  builder.writeUnsignedInt32(entryCount);
   builder.push(offsets, messages);
   builder.pad(16, "\u00AB");
 
   return builder.build();
 }
 
-export function rebuild(entries: DataEntry[], source: Buffer) {
+export function rebuild(source: Buffer, replacements: Map<string, string>): Buffer {
   const sourceHeader = parseHeader(source);
   const sourceSections = parseSections(source, sourceHeader);
+  const entries = parseEntries(sourceHeader, sourceSections);
 
   let labelsSlots = 0;
 
@@ -83,7 +84,8 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
   const textsMessagesOffset = 4 + entries.length * 4;
 
   for (const [entryIndex, entry] of entries.entries()) {
-    const [label, message] = entry;
+    const [label, sourceMessage] = entry;
+    const message = replacements.get(label) ?? sourceMessage;
     const textMessageOffset = textsMessagesOffset + textsMessagesBuilder.length;
 
     textsOffsetsBuilder.writeUnsignedInt32(textMessageOffset);
@@ -127,7 +129,7 @@ export function rebuild(entries: DataEntry[], source: Buffer) {
     } else if (kind === "TXT2") {
       sections.push(
         rebuildTexts(
-          entries,
+          entries.length,
           textsOffsetsBuilder.build(),
           textsMessagesBuilder.build(),
           sourceHeader,

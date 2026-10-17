@@ -1,11 +1,12 @@
 import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
 import { encodeToString } from "@triforce-heroes/triforce-core/Encoding";
 
-import type { DataEntry } from "#/types/DataEntry";
 import type { DataHeader } from "#/types/DataHeader";
 import { MessageEncoding } from "#/types/MessageEncoding";
 
-export function parseEntries(header: DataHeader, sections: Map<string, Buffer>) {
+type DataEntry = [label: string, message: string];
+
+export function parseEntries(header: DataHeader, sections: Map<string, Buffer>): DataEntry[] {
   const labelsData = sections.get("LBL1")!;
   const labelsConsumer = new BufferConsumer(labelsData, undefined, header.bom);
   const labelsCount = labelsConsumer.readUnsignedInt32();
