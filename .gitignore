@@ -1,0 +1,3 @@
+tests/fixtures/**/*.msbt
+tests/snaps/**/*.snap
+tools/resources

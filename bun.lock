@@ -9,6 +9,7 @@
       },
       "devDependencies": {
         "@rheactor/rheactor-oxc-config": "github:rheactor/rheactor-oxc-config",
+        "@triforce-heroes/triforce-publisher": "github:triforce-heroes/triforce-publisher",
         "@types/node": "^26.6.5",
         "@vitest/coverage-v8": "^5.0.5",
         "oxfmt": "^0.73.0",
@@ -21,6 +22,8 @@
     },
   },
   "packages": {
+    "@ark/util": ["@ark/util@0.56.7", "", {}, "sha512-z8pVnrPk/x9GC18yOp5wCe8rR2+Z6us4CTSg7dvxdsDLuA2xXYq+QETD1fO6f3fMuXe+PCjpvtCnhTW9RHLgEw=="],
+
     "@babel/helper-string-parser": ["@babel/helper-string-parser@7.29.7", "", {}, "sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw=="],
 
     "@babel/helper-validator-identifier": ["@babel/helper-validator-identifier@7.29.7", "", {}, "sha512-qehxGkRj55h/ff8EMaJ+cYhyaKlHIxqYDn682wQD7RNp9UujOQsHog2uS0r2vzr4pW+sXf90NeeayjcNaX3fFg=="],
@@ -131,7 +134,11 @@
 
     "@quansync/fs": ["@quansync/fs@1.1.0", "", { "dependencies": { "quansync": "^1.0.0" } }, "sha512-qAPG/t3HqML1TlN7sY/pTbEjzFVAKsMjNNMGheyDosro+kT4iw2KCUoHcVdmliwWjorm4elZbgNQyU2eD97eDg=="],
 
+    "@rheactor/rheactor-core": ["@rheactor/rheactor-core@github:rheactor/rheactor-core#546e467", { "dependencies": { "is-path-inside": "^4.0.0" }, "peerDependencies": { "next": "^16.3.4", "tailwind-merge": "^3.6.0" }, "optionalPeers": ["next", "tailwind-merge"] }, "rheactor-rheactor-core-546e467", "sha512-oC9laPM22st8VeWDuqngEbxxK2pahOTTClqzyJFjlf9hlADzrfgeSaq3eZe6zZ4r9awz9QdIM3B2RDdX/nr9cw=="],
+
     "@rheactor/rheactor-oxc-config": ["@rheactor/rheactor-oxc-config@github:rheactor/rheactor-oxc-config#cea369d", { "dependencies": { "oxfmt": "^0.68.0", "oxlint": "^1.83.0", "oxlint-tsgolint": "^7.0.2001" }, "peerDependencies": { "next": "^16.3.5", "react": "^19.3.0", "vitest": "^5.0.1" }, "optionalPeers": ["next", "react", "vitest"] }, "rheactor-rheactor-oxc-config-cea369d", "sha512-lmDY0LA7RO4a8VOXU2HekC3Ljz8px3qfDoxDnd3SUoMnuwClQqoQAAtwg58hih4fSKIW/Of4JOosTP9edaMODQ=="],
+
+    "@rheactor/rheactor-query-builder": ["@rheactor/rheactor-query-builder@github:rheactor/rheactor-query-builder#0ccb639", {}, "rheactor-rheactor-query-builder-0ccb639", "sha512-Qke2iot7MeVN1bW558rvXduUzmHdLew/aGvTOF461R05aXPMgWBFj1UaDdulcQ8a+Omr+k9XwoPmxq/8UTGA0g=="],
 
     "@rolldown/binding-android-arm-eabi": ["@rolldown/binding-android-arm-eabi@1.2.14", "", { "os": "android", "cpu": "arm" }, "sha512-aWR+XKH9+rW7m5fWq/5360J3mHycrx/o6xZM2DQFdJnTMdyP7/WzxPjhtLbVWdKo2y612/4U1bWqb3HQhiF7vg=="],
 
@@ -166,6 +173,8 @@
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.1", "", {}, "sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw=="],
 
     "@triforce-heroes/triforce-core": ["@triforce-heroes/triforce-core@github:triforce-heroes/triforce-core#7a5b966", { "dependencies": { "chalk": "^6.0.0", "iconv-lite": "^0.7.3", "json-diff": "^1.0.6" } }, "triforce-heroes-triforce-core-7a5b966", "sha512-bgiFyfuGo11yZHN/o+m9aEbPBIAzbVFeMi282EYNCpipBZq1EaKOH9vG022ySBbbOkNxxMD10GsoFX44Lp9c/g=="],
+
+    "@triforce-heroes/triforce-publisher": ["@triforce-heroes/triforce-publisher@github:triforce-heroes/triforce-publisher#d107a6b", { "dependencies": { "@rheactor/rheactor-core": "github:@rheactor/rheactor-core", "@rheactor/rheactor-query-builder": "github:rheactor/rheactor-query-builder", "@triforce-heroes/triforce-core": "github:triforce-heroes/triforce-core", "arkregex": "^0.0.13" } }, "triforce-heroes-triforce-publisher-d107a6b", "sha512-H8UKwlQRjmRHJfOnP0LmQBeOGGDAR/AwIHhpBD0jZdrUtg5luxMyLBJmc8vazaVRxN7CrQYriGCEnCLG1YCvNw=="],
 
     "@types/chai": ["@types/chai@5.2.3", "", { "dependencies": { "@types/deep-eql": "*", "assertion-error": "^2.0.1" } }, "sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA=="],
 
@@ -251,6 +260,8 @@
 
     "@yuku-toolchain/types": ["@yuku-toolchain/types@0.19.0", "", {}, "sha512-tFkNbsP4WXX9UMUC5syJGdK9dPMLK0PPaIuXCcCYH75sZ8MrebfBZ2XvCILRTw8AgLivSSCfDa4R67iYBDa4Kg=="],
 
+    "arkregex": ["arkregex@0.0.13", "", { "dependencies": { "@ark/util": "0.56.7" } }, "sha512-c17sqCqiiZauxyoU1KZ2zbzCgeghGmc8dR2CrdQnlEtpq3bLhRLoLrxTL52M/8yQD8e/i1/IBRpRCNAuqJa7xQ=="],
+
     "assertion-error": ["assertion-error@2.0.1", "", {}, "sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA=="],
 
     "ast-v8-to-istanbul": ["ast-v8-to-istanbul@1.0.7", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.31", "estree-walker": "^3.0.3", "js-tokens": "^10.0.0" } }, "sha512-kFL68AG6ajd8fg248zwM9GQrUWEp79gsmjum34OEXjs4yHuUMZfYKwOLW9GMmB4oNvVrj+EAGxsP7ye2UR9UlA=="],
@@ -292,6 +303,8 @@
     "iconv-lite": ["iconv-lite@0.7.3", "", { "dependencies": { "safer-buffer": ">= 2.1.2 < 3.0.0" } }, "sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ=="],
 
     "import-without-cache": ["import-without-cache@0.4.1", "", {}, "sha512-vXoV9PjKHEednCUu01e98TkImxy67e3BJXbTIOmIq4Hyzw3IAwYRcuPkfeTzJzwyyts4kjuA73x+pWJLc4f86A=="],
+
+    "is-path-inside": ["is-path-inside@4.0.0", "", {}, "sha512-lJJV/5dYS+RcL8uQdBDW9c9uWFLLBNRyFhnAKXw5tVqLlKZ4RMGZKv+YQ/IA3OhD+RpbJa1LLFM1FQPGyIXvOA=="],
 
     "js-tokens": ["js-tokens@10.0.0", "", {}, "sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q=="],
 
@@ -394,6 +407,8 @@
     "yuku-parser": ["yuku-parser@0.19.0", "", { "dependencies": { "@yuku-toolchain/types": "^0.19.0", "yuku-core": "0.19.0" } }, "sha512-XrBh9ZiQK5mJVRxZBAvD6LwRyAYrK3MFtH3+onyuxFL5hFD44EC3QOmIC1FjTj6H2MMwq46/NAI+NZxLZPZgxg=="],
 
     "@rheactor/rheactor-oxc-config/oxfmt": ["oxfmt@0.68.0", "", { "dependencies": { "tinypool": "2.1.2" }, "optionalDependencies": { "@oxfmt/binding-android-arm-eabi": "0.68.0", "@oxfmt/binding-android-arm64": "0.68.0", "@oxfmt/binding-darwin-arm64": "0.68.0", "@oxfmt/binding-darwin-x64": "0.68.0", "@oxfmt/binding-freebsd-x64": "0.68.0", "@oxfmt/binding-linux-arm-gnueabihf": "0.68.0", "@oxfmt/binding-linux-arm-musleabihf": "0.68.0", "@oxfmt/binding-linux-arm64-gnu": "0.68.0", "@oxfmt/binding-linux-arm64-musl": "0.68.0", "@oxfmt/binding-linux-ppc64-gnu": "0.68.0", "@oxfmt/binding-linux-riscv64-gnu": "0.68.0", "@oxfmt/binding-linux-riscv64-musl": "0.68.0", "@oxfmt/binding-linux-s390x-gnu": "0.68.0", "@oxfmt/binding-linux-x64-gnu": "0.68.0", "@oxfmt/binding-linux-x64-musl": "0.68.0", "@oxfmt/binding-openharmony-arm64": "0.68.0", "@oxfmt/binding-win32-arm64-msvc": "0.68.0", "@oxfmt/binding-win32-ia32-msvc": "0.68.0", "@oxfmt/binding-win32-x64-msvc": "0.68.0" }, "peerDependencies": { "svelte": "^5.0.0", "vite-plus": "*" }, "optionalPeers": ["svelte", "vite-plus"], "bin": { "oxfmt": "bin/oxfmt" } }, "sha512-Z0XMofcXCGUXbcpBHnWyUiX93BGiw1B+lcHNbQDWEtOhX06ewoFfu4zXkyiLhRrNnMq0twqXRHUcJetf+GsiQQ=="],
+
+    "@triforce-heroes/triforce-publisher/@triforce-heroes/triforce-core": ["@triforce-heroes/triforce-core@github:triforce-heroes/triforce-core#7a5b966", { "dependencies": { "chalk": "^6.0.0", "iconv-lite": "^0.7.3", "json-diff": "^1.0.6" } }, "triforce-heroes-triforce-core-7a5b966", "sha512-bgiFyfuGo11yZHN/o+m9aEbPBIAzbVFeMi282EYNCpipBZq1EaKOH9vG022ySBbbOkNxxMD10GsoFX44Lp9c/g=="],
 
     "@rheactor/rheactor-oxc-config/oxfmt/@oxfmt/binding-android-arm-eabi": ["@oxfmt/binding-android-arm-eabi@0.68.0", "", { "os": "android", "cpu": "arm" }, "sha512-dhfYPbzv/h9JgHjNkl2R6sOjUfxDyLGOZVb3g8/ScaTNwwJcYgmHh8kcYFDUhinuy1QAoANCWUvw1jlk+z6gAg=="],
 

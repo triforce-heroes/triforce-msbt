@@ -1,5 +1,5 @@
 import { BufferBuilder } from "@triforce-heroes/triforce-core/BufferBuilder";
-import { encodeFromString } from "@triforce-heroes/triforce-core/Encoding";
+import { encodeFromString, encodeString } from "@triforce-heroes/triforce-core/Encoding";
 import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 
 import { parseEntries } from "#/parser/parseEntries";
@@ -10,6 +10,20 @@ import { MessageEncoding } from "#/types/MessageEncoding";
 import { hash } from "#/utils/hash";
 
 type DataLabel = [identifier: string, index: number];
+
+function encodeMessage(message: string, header: DataHeader): Buffer {
+  if (header.encoding === MessageEncoding.UTF8) {
+    return encodeFromString(`${message}\0`);
+  }
+
+  if (header.encoding !== MessageEncoding.UTF16) {
+    return Buffer.from(`${message}\0\0`, "binary");
+  }
+
+  const messageBytes = encodeString(`${message}\0`, "utf16-le");
+
+  return header.bom === ByteOrder.BIG_ENDIAN ? messageBytes.swap16() : messageBytes;
+}
 
 function rebuildHeader(sections: Buffer[], header: DataHeader) {
   const builder = new BufferBuilder(header.bom);
@@ -89,11 +103,7 @@ export function rebuild(source: Buffer, replacements: Map<string, string>): Buff
     const textMessageOffset = textsMessagesOffset + textsMessagesBuilder.length;
 
     textsOffsetsBuilder.writeUnsignedInt32(textMessageOffset);
-    textsMessagesBuilder.push(
-      sourceHeader.encoding === MessageEncoding.UTF8
-        ? encodeFromString(`${message}\0`)
-        : Buffer.from(`${message}\0\0`, "binary"),
-    );
+    textsMessagesBuilder.push(encodeMessage(message, sourceHeader));
 
     labels.get(hash(label, labelsSlots))!.push([label, entryIndex]);
   }

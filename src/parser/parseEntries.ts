@@ -1,10 +1,33 @@
 import { BufferConsumer } from "@triforce-heroes/triforce-core/BufferConsumer";
-import { encodeToString } from "@triforce-heroes/triforce-core/Encoding";
+import { decodeBuffer, encodeToString } from "@triforce-heroes/triforce-core/Encoding";
+import { ByteOrder } from "@triforce-heroes/triforce-core/types/ByteOrder";
 
 import type { DataHeader } from "#/types/DataHeader";
 import { MessageEncoding } from "#/types/MessageEncoding";
 
 type DataEntry = [label: string, message: string];
+
+function decodeMessage(source: Buffer, header: DataHeader): string {
+  if (header.encoding === MessageEncoding.UTF8) {
+    return encodeToString(source.subarray(0, -1));
+  }
+
+  const message = source.subarray(0, -2);
+
+  if (header.encoding !== MessageEncoding.UTF16) {
+    return message.toString("binary");
+  }
+
+  if (message.length % 2 !== 0) {
+    throw new Error("Invalid UTF-16 message byte length.");
+  }
+
+  // Swap a copy to avoid changing the original file or binary control codes.
+  const littleEndianMessage =
+    header.bom === ByteOrder.BIG_ENDIAN ? Buffer.from(message).swap16() : message;
+
+  return decodeBuffer(littleEndianMessage, "utf16-le");
+}
 
 export function parseEntries(header: DataHeader, sections: Map<string, Buffer>): DataEntry[] {
   const labelsData = sections.get("LBL1")!;
@@ -36,9 +59,7 @@ export function parseEntries(header: DataHeader, sections: Map<string, Buffer>):
 
     entries.push([
       names.get(i)!,
-      header.encoding === MessageEncoding.UTF8
-        ? encodeToString(textsData.subarray(offsetStarts, offsetEnds - 1))
-        : textsData.subarray(offsetStarts, offsetEnds - 2).toString("binary"),
+      decodeMessage(textsData.subarray(offsetStarts, offsetEnds), header),
     ]);
   }
 

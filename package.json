@@ -25,20 +25,23 @@
     "build": "bun run lint && bun run test && tsdown",
     "lint": "bun run typecheck && bun run oxlint && bun run oxfmt",
     "lint:fix": "bun run typecheck && bun run oxlint:fix && bun run oxfmt:fix",
-    "oxfmt": "oxfmt --check ./src ./tests",
-    "oxfmt:fix": "oxfmt --write ./src ./tests",
-    "oxlint": "oxlint ./src ./tests",
-    "oxlint:fix": "oxlint --fix ./src ./tests",
+    "oxfmt": "oxfmt --check ./src ./tests ./tools",
+    "oxfmt:fix": "oxfmt --write ./src ./tests ./tools",
+    "oxlint": "oxlint ./src ./tests ./tools",
+    "oxlint:fix": "oxlint --fix ./src ./tests ./tools",
     "test": "vitest --run",
     "test:coverage": "vitest --run --coverage",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "watch": "bun ./tools/watch.ts",
+    "watch:watch": "bun --watch ./tools/watch.ts"
   },
   "dependencies": {
     "@triforce-heroes/triforce-core": "github:triforce-heroes/triforce-core"
   },
   "devDependencies": {
     "@rheactor/rheactor-oxc-config": "github:rheactor/rheactor-oxc-config",
+    "@triforce-heroes/triforce-publisher": "github:triforce-heroes/triforce-publisher",
     "@types/node": "^26.6.5",
     "@vitest/coverage-v8": "^5.0.5",
     "oxfmt": "^0.73.0",
